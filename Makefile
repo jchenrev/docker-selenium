@@ -51,6 +51,12 @@ generate_chrome:
 chrome: nodebase generate_chrome
 	cd ./NodeChrome && docker build $(BUILD_ARGS) -t $(NAME)/node-chrome:$(VERSION) .
 
+generate_chromium:
+	cd ./NodeChromium && ./generate.sh $(VERSION) $(NAMESPACE) $(AUTHORS)
+
+chromium: nodebase generate_chromium
+	cd ./NodeChromium && docker build $(BUILD_ARGS) -t $(NAME)/node-chromium:$(VERSION) .
+
 generate_firefox:
 	cd ./NodeFirefox && ./generate.sh $(VERSION) $(NAMESPACE) $(AUTHORS)
 
@@ -81,11 +87,23 @@ generate_standalone_chrome:
 standalone_chrome: chrome generate_standalone_chrome
 	cd ./StandaloneChrome && docker build $(BUILD_ARGS) -t $(NAME)/standalone-chrome:$(VERSION) .
 
+generate_standalone_chromium:
+	cd ./Standalone && ./generate.sh StandaloneChromium node-chromium Chromium $(VERSION) $(NAMESPACE) $(AUTHORS)
+
+standalone_chromium: chromium generate_standalone_chromium
+	cd ./StandaloneChromium && docker build $(BUILD_ARGS) -t $(NAME)/standalone-chromium:$(VERSION) .
+
 generate_standalone_chrome_debug:
 	cd ./StandaloneDebug && ./generate.sh StandaloneChromeDebug node-chrome-debug Chrome $(VERSION) $(NAMESPACE) $(AUTHORS)
 
 standalone_chrome_debug: chrome_debug generate_standalone_chrome_debug
 	cd ./StandaloneChromeDebug && docker build $(BUILD_ARGS) -t $(NAME)/standalone-chrome-debug:$(VERSION) .
+
+generate_standalone_chromium_debug:
+	cd ./StandaloneDebug && ./generate.sh StandaloneChromiumDebug node-chromium-debug Chromium $(VERSION) $(NAMESPACE) $(AUTHORS)
+
+standalone_chromium_debug: chromium_debug generate_standalone_chromium_debug
+	cd ./StandaloneChromiumDebug && docker build $(BUILD_ARGS) -t $(NAME)/standalone-chromium-debug:$(VERSION) .
 
 generate_standalone_opera:
 	cd ./Standalone && ./generate.sh StandaloneOpera node-opera Opera $(VERSION) $(NAMESPACE) $(AUTHORS)
@@ -104,6 +122,12 @@ generate_chrome_debug:
 
 chrome_debug: generate_chrome_debug chrome
 	cd ./NodeChromeDebug && docker build $(BUILD_ARGS) -t $(NAME)/node-chrome-debug:$(VERSION) .
+
+generate_chromium_debug:
+	cd ./NodeDebug && ./generate.sh NodeChromiumDebug node-chromium Chromium $(VERSION) $(NAMESPACE) $(AUTHORS)
+
+chromium_debug: generate_chromium_debug chromium
+	cd ./NodeChromiumDebug && docker build $(BUILD_ARGS) -t $(NAME)/node-chromium-debug:$(VERSION) .
 
 generate_firefox_debug:
 	cd ./NodeDebug && ./generate.sh NodeFirefoxDebug node-firefox Firefox $(VERSION) $(NAMESPACE) $(AUTHORS)
